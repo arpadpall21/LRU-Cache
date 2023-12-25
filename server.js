@@ -1,10 +1,14 @@
 import express from 'express';
+import { FakeDatabaseAdapter} from './db/dbAdapter.js';
 
 const app = express();
+const fakeDb = new FakeDatabaseAdapter();
 const port = 3000;
 
+
 app.get('/some_resource/:id', express.json(), (req, res) => {
-  res.send({ id: req.params.id, message: 'Hello World!' });
+  const id = req.params.id;
+  res.send({ id , message: fakeDb.getContent(id) });
 });
 
 app.use('*', express.json(), (req, res) => {
