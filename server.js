@@ -6,9 +6,9 @@ const fakeDb = new FakeDatabaseAdapter();
 const port = 3000;
 
 
-app.get('/some_resource/:id', express.json(), (req, res) => {
+app.get('/some_resource/:id', express.json(), async (req, res) => {
   const id = req.params.id;
-  res.send({ id , message: fakeDb.getContent(id) });
+  res.send({ id , message: await fakeDb.getContent(id) });
 });
 
 app.use('*', express.json(), (req, res) => {
