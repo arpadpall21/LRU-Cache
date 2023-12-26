@@ -8,16 +8,17 @@ class FakeDatabaseAdapter {
       result += `${nrWord[n]}.`;
     }
 
-    await blocker(2);       // simulating 2 second latency
+    await this.blocker(2);       // simulating 2 second latency
     return result;
+  }
+
+  blocker(delaySec) {
+    return new Promise((res) => {
+      setTimeout(() => res(), delaySec * 1000)
+    });
   }
 }
 
-function blocker(delaySec) {
-  return new Promise((res) => {
-    setTimeout(() => res(), delaySec * 1000)
-  });
-}
 
 const fakeDb = new FakeDatabaseAdapter();
 export default fakeDb;
