@@ -1,13 +1,14 @@
 const nrWord = ['zero', 'one', 'two', 'three', 'four',  'five', 'six', 'seven', 'eight', 'nine'];
 
-export class FakeDatabaseAdapter {
+
+class FakeDatabaseAdapter {
   async getContent(id) {
     let result = '';
     for (let n of id.toString()) {
       result += `${nrWord[n]}.`;
     }
 
-    await blocker(2);       // simulating 2 seconds of latency
+    await blocker(2);       // simulating 2 second latency
     return result;
   }
 }
@@ -17,3 +18,6 @@ function blocker(delaySec) {
     setTimeout(() => res(), delaySec * 1000)
   });
 }
+
+const fakeDb = new FakeDatabaseAdapter();
+export default fakeDb;
