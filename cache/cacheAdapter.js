@@ -1,14 +1,15 @@
 import { createClient as createRedisClient } from 'redis';
 
+const cacheSize = 10;
 
 class CacheAdapter {
-  constructor(arg) {
-    this.cacheRank = 'cacheRank';
+  constructor() {
+    this.cacheRankName = 'cacheRank';
     this.redisClient = null;
-    this.connect();
+    this.#connect();
   }
 
-  connect() {
+  #connect() {
     createRedisClient().on('error', err => console.log('Redis Client Error', err)).connect()
       .then(redisClient => {
         this.redisClient = redisClient;
@@ -24,15 +25,19 @@ class CacheAdapter {
       return null;
     }
 
-    await this.redisClient.zIncrBy(this.cacheRank, '1', id);
+    await this.redisClient.sendCommand(['ZINCRBY', this.cacheRankName, '1', id]);
     return content;
   }
 
   async setContent(id, content) {
-    await this.redisClient.set(id, content);
-    await this.redisClient.sendCommand(['ZADD', this.cacheRank, '1', id]);
-  }
+    if (await this.redisClient.sendCommand(['ZCARD', this.cacheRankName]) > cacheSize) {
+      const lastMember = await this.redisClient.sendCommand(['ZPOPMIN', this.cacheRankName]);
+      await this.redisClient.del(lastMember[0]);
+    }
 
+    await this.redisClient.set(id, content);
+    await this.redisClient.sendCommand(['ZADD', this.cacheRankName, '1', id]);
+  }
 }
 
 const cache = new CacheAdapter();
