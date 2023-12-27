@@ -1,6 +1,6 @@
 import { createClient as createRedisClient } from 'redis';
 
-const cacheSize = 10;
+const cacheSize = 5;
 
 class CacheAdapter {
   constructor() {

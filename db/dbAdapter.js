@@ -8,11 +8,11 @@ class FakeDatabaseAdapter {
       result += `${nrWord[n]}.`;
     }
 
-    await this.blocker(2);       // simulating 2 seconds of latency
+    await this.wait(2);       // simulating 2 second latency
     return result;
   }
 
-  blocker(delaySec) {
+  wait(delaySec) {
     return new Promise((res) => {
       setTimeout(() => res(), delaySec * 1000)
     });
